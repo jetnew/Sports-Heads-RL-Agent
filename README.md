@@ -13,3 +13,4 @@ Reinforcement learning agent to play Sports Heads.
 
 ## References
 * [Sports Heads](http://hazardousgames123.weebly.com/sports-heads.html)
+* [Template Matching](https://www.geeksforgeeks.org/template-matching-using-opencv-in-python/)
