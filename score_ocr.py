@@ -10,7 +10,7 @@ import pyautogui as pag
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"
 
 
-def get_img(player, dims=(10, 10), show=False):
+def get_img(player, dims=(50, 50), show=False):
     """Given player number, return score image from screen."""
     if player == 0:
         boundary = (0, 300, 50, 350)
@@ -28,12 +28,13 @@ def get_img(player, dims=(10, 10), show=False):
         cv2.destroyAllWindows()
     return img
 
+
 def get_scores():
     """Return scores for players 1 and 2."""
-    # pag.click(x=1000, y=600)
+
     img0 = get_img(player=0)
     img1 = get_img(player=1)
-    # pag.click(x=800, y=500)
+
     config = ('--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789')
     text0 = pytesseract.image_to_string(img0, lang="eng", config=config)
     text1 = pytesseract.image_to_string(img1, lang="eng", config=config)
@@ -47,9 +48,8 @@ def get_scores():
 # time.sleep(2)
 # get_img(1)
 
-show = True
-get_img(0, show=show)
-get_img(1, show=show)
-
+# get_img(0, show=True)
+# get_img(1, show=True)
+#
 # while True:
 #     get_scores()

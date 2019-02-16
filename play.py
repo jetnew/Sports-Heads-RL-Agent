@@ -6,6 +6,7 @@ from env import FootballHeadEnv
 import itertools
 from graph import EpisodeStats, plot_episode_stats
 import numpy as np
+import threading
 import random
 time.sleep(2)
 
@@ -17,6 +18,7 @@ BATCH_SIZE = 32
 
 # Define agent
 agent = DQNAgent(STATE_SIZE, ACTION_SIZE)
+
 done = False
 
 # For graphing
@@ -26,11 +28,9 @@ stats = EpisodeStats(
 
 # Start environment
 env = FootballHeadEnv()
-# # Random agent
+# Random agent
 # while True:
-#     move(action_space[random.randint(0,3)])
-
-# state = env.reset()
+#     move(action_space[random.randint(0,7)])
 
 for e in range(EPISODES):
     # Restart game
@@ -42,6 +42,7 @@ for e in range(EPISODES):
         print("Agent act")
         action = agent.act(state)
         move(action_space[action])
+
         print("Env step")
         next_state, reward, done, _ = env.step(state)
 
@@ -50,7 +51,8 @@ for e in range(EPISODES):
         state = next_state
 
         print("Agent replay")
-        if len(agent.memory) > BATCH_SIZE:
+        print("t:", t)
+        if len(agent.memory) > BATCH_SIZE and t % 5 == 0:
             agent.replay(BATCH_SIZE)
 
         # For graphing

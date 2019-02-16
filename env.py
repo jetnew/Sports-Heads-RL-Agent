@@ -3,8 +3,9 @@ import pyautogui as pag
 import time
 from get_window import get_frame
 from movement import move, action_space
-from score_ocr import get_scores
-
+# from score_ocr import get_scores
+from score_tm import get_score
+import threading
 # p1_score, p2_score = get_scores()
 
 
@@ -26,7 +27,7 @@ class FootballHeadEnv:
 
     def step(self, state):
         """Take an action."""
-        new_p1_score, new_p2_score = get_scores()
+        new_p1_score, new_p2_score = get_score()
 
         if new_p1_score == -1 or new_p2_score == -1:
             print("ERROR: Cannot detect score.")
@@ -43,11 +44,34 @@ class FootballHeadEnv:
             reward = -1
 
         # If: Game ends
-        if self.p1_score == 1 or self.p2_score == 1:
+        if self.p1_score == 7 or self.p2_score == 7:
             done = True
         else: done = False
 
-        return state, reward, done, None
+        next_state = get_frame()
+        return next_state, reward, done, None
+
+    def get_score(self):
+        new_p1_score, new_p2_score = get_scores()
+        if new_p1_score == -1 or new_p2_score == -1:
+            print("ERROR: Cannot detect score.")
+
+        # If: Player 1 scores
+        if new_p1_score > self.p1_score:
+            reward = 100
+            self.p1_score = new_p1_score
+        # If: Player 2 scores
+        elif new_p2_score > self.p2_score:
+            reward = -100
+            self.p2_score = new_p2_score
+        else:
+            reward = -1
+        # If: Game ends
+        if self.p1_score == 7 or self.p2_score == 7:
+            done = True
+        else:
+            done = False
+        return reward, done
 
     @staticmethod
     def start_new_game():

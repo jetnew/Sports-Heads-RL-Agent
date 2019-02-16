@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 
 
-def get_frame(dims=(200, 200), show_state=False):
+def get_frame(dims=(200, 200), show_state=False, get_score=False):
     """Get the state of the game."""
     # bbox = x, y, width, height
     img = ImageGrab.grab(bbox=(0,190,958,865))
@@ -16,4 +16,10 @@ def get_frame(dims=(200, 200), show_state=False):
         cv2.imshow("test", frame)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-    return frame
+
+    # To use in score_tm.py
+    if get_score:
+        return frame
+    return frame.flatten().reshape(1, 40000)
+
+# print(get_frame().shape)
