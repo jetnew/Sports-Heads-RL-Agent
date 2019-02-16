@@ -5,6 +5,7 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
 import itertools
+from movement import action_space, move
 
 
 class DQNAgent:
@@ -40,7 +41,11 @@ class DQNAgent:
             return random.randrange(self.action_size)
         # Exploit
         act_values = self.model.predict(state)
-        return np.argmax(act_values[0])  # returns action
+        action = np.argmax(act_values[0])
+        # print("Action:", action_space[action])
+        # Move
+        # move(action_space[action])
+        return action  # returns action
 
     def replay(self, batch_size):
         """Experience replay through random sampling. Decay epsilon."""

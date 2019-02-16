@@ -18,15 +18,18 @@ class FootballHeadEnv:
 
     def reset(self):
         """Reset a game while in game."""
+        self.p1_score = 0
+        self.p2_score = 0
         self.go_to_menu()
         self.start_new_game()
         return get_frame()
 
-    def step(self, action):
+    def step(self, state):
         """Take an action."""
-        move(action_space[action])
-        state = get_frame()
         new_p1_score, new_p2_score = get_scores()
+
+        if new_p1_score == -1 or new_p2_score == -1:
+            print("ERROR: Cannot detect score.")
 
         # If: Player 1 scores
         if new_p1_score > self.p1_score:
@@ -40,7 +43,7 @@ class FootballHeadEnv:
             reward = -1
 
         # If: Game ends
-        if self.p1_score == 7 or self.p2_score == 7:
+        if self.p1_score == 1 or self.p2_score == 1:
             done = True
         else: done = False
 
@@ -67,6 +70,6 @@ class FootballHeadEnv:
         time.sleep(4)
 
 
-env = FootballHeadEnv()
-print("resetting")
-print(env.reset())
+# env = FootballHeadEnv()
+# print("resetting")
+# print(env.reset())
