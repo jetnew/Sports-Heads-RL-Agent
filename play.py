@@ -39,11 +39,13 @@ def play():
     state = env.reset()
     for t in itertools.count():
         action1 = agent1.act(state)
+        # action1 = random.randint(0,3)  # random
         move(action_space[action1])
 
         action2 = agent2.act(state)
         action2 += 4
         move(action_space[action2])
+
         next_state, p1_reward, p2_reward, done, _ = env.step(state)
         state = next_state
 # Train
@@ -61,6 +63,7 @@ def train():
             action1 = agent1.act(state)
             move(action_space[action1])
             action2 = agent2.act(state) + 4
+            # action2 = random.randint(4, 7)
             move(action_space[action2])
 
             # print("Env step")
@@ -70,14 +73,14 @@ def train():
 
             # print("Agent remember")
             agent1.remember(state, action1, p1_reward, next_state, done)
-            agent2.remember(state, action2, p2_reward, next_state, done)
+            # agent2.remember(state, action2, p2_reward, next_state, done)
             state = next_state
 
             # print("Agent replay")
             # print("Timestep:", t)
             if len(agent1.memory) > BATCH_SIZE and t % 5 == 0:
                 agent1.replay(BATCH_SIZE)
-                agent2.replay(BATCH_SIZE)
+                # agent2.replay(BATCH_SIZE)
 
             # For graphing
             stats.episode_rewards[e] += p1_reward
@@ -87,7 +90,9 @@ def train():
                 print("Episode:", e,
                       "P1 total reward:", p1_total_reward,
                       "P2 total reward:", p2_total_reward,
-                      "Time taken:", t)
+                      "Time taken:", t,
+                      "Agent 1's epsilon:", agent1.epsilon,
+                      "Agent 2's epsilon:", agent2.epsilon)
                 break
 
             if e % 10 == 0:
