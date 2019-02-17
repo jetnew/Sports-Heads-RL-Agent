@@ -15,7 +15,7 @@ class DQNAgent:
         self.memory = deque(maxlen=2000)
         self.gamma = 0.95    # discount rate
         self.epsilon = 1.0  # exploration rate
-        self.epsilon_min = 0
+        self.epsilon_min = 0.1
         self.epsilon_decay = 0.9995
         self.learning_rate = 0.001
         self.model = self.build_model()
@@ -53,10 +53,11 @@ class DQNAgent:
         for state, action, reward, next_state, done in minibatch:
             target = reward
             if not done:
-                print("next_state:", next_state.shape)
-                print("self.model.predict(next_state)[0]:", self.model.predict(next_state)[0])
+                # print("next_state:", next_state.shape)
+                # print("self.model.predict(next_state)[0]:", self.model.predict(next_state)[0])
                 target = (reward + self.gamma * np.amax(self.model.predict(next_state)[0]))
             target_f = self.model.predict(state)
+            action %= 4
             target_f[0][action] = target
             self.model.fit(state, target_f, epochs=1, verbose=0)
         if self.epsilon > self.epsilon_min:

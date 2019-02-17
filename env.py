@@ -34,14 +34,17 @@ class FootballHeadEnv:
 
         # If: Player 1 scores
         if new_p1_score > self.p1_score:
-            reward = 100
+            p1_reward = 1000
+            p2_reward = -1000
             self.p1_score = new_p1_score
         # If: Player 2 scores
         elif new_p2_score > self.p2_score:
-            reward = -100
+            p1_reward = -1000
+            p2_reward = 1000
             self.p2_score = new_p2_score
         else:
-            reward = -1
+            p1_reward = -1
+            p2_reward = -1
 
         # If: Game ends
         if self.p1_score == 7 or self.p2_score == 7:
@@ -49,7 +52,7 @@ class FootballHeadEnv:
         else: done = False
 
         next_state = get_frame()
-        return next_state, reward, done, None
+        return next_state, p1_reward, p2_reward, done, None
 
     def get_score(self):
         new_p1_score, new_p2_score = get_scores()

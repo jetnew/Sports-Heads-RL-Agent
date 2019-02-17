@@ -13,12 +13,14 @@ time.sleep(2)
 # Define consts
 STATE_SIZE = 200 * 200  # dims
 ACTION_SIZE = 4
-EPISODES = 10
+EPISODES = 1000
 BATCH_SIZE = 32
 
 # Define agent
-agent = DQNAgent(STATE_SIZE, ACTION_SIZE)
-
+agent1 = DQNAgent(STATE_SIZE, ACTION_SIZE)  # right
+agent2 = DQNAgent(STATE_SIZE, ACTION_SIZE)  # left
+agent1.load("spheads-dqn1.h5")
+agent2.load("spheads-dqn2.h5")
 done = False
 
 # For graphing
@@ -32,37 +34,67 @@ env = FootballHeadEnv()
 # while True:
 #     move(action_space[random.randint(0,7)])
 
-for e in range(EPISODES):
-    # Restart game
+# Play
+def play():
     state = env.reset()
-    total_reward = 0
-
     for t in itertools.count():
-        # Play game
-        print("Agent act")
-        action = agent.act(state)
-        move(action_space[action])
+        action1 = agent1.act(state)
+        move(action_space[action1])
 
-        print("Env step")
-        next_state, reward, done, _ = env.step(state)
-
-        print("Agent remember")
-        agent.remember(state, action, reward, next_state, done)
+        action2 = agent2.act(state)
+        action2 += 4
+        move(action_space[action2])
+        next_state, p1_reward, p2_reward, done, _ = env.step(state)
         state = next_state
+# Train
+def train():
+    for e in range(EPISODES):
+        print("Episode:", e)
+        # Restart game
+        state = env.reset()
+        p1_total_reward = 0
+        p2_total_reward = 0
 
-        print("Agent replay")
-        print("t:", t)
-        if len(agent.memory) > BATCH_SIZE and t % 5 == 0:
-            agent.replay(BATCH_SIZE)
+        for t in itertools.count():
+            # Play game
+            # print("Agent act")
+            action1 = agent1.act(state)
+            move(action_space[action1])
+            action2 = agent2.act(state) + 4
+            move(action_space[action2])
 
-        # For graphing
-        stats.episode_rewards[e] += reward
-        stats.episode_lengths[e] = t
+            # print("Env step")
+            next_state, p1_reward, p2_reward, done, _ = env.step(state)
+            p1_total_reward += p1_reward
+            p2_total_reward += p2_reward
 
-        if done:
-            print("Episode:", e,
-                  "Total reward:", total_reward,
-                  "Time taken:", t)
-            break
+            # print("Agent remember")
+            agent1.remember(state, action1, p1_reward, next_state, done)
+            agent2.remember(state, action2, p2_reward, next_state, done)
+            state = next_state
 
-plot_episode_stats(stats)
+            # print("Agent replay")
+            # print("Timestep:", t)
+            if len(agent1.memory) > BATCH_SIZE and t % 5 == 0:
+                agent1.replay(BATCH_SIZE)
+                agent2.replay(BATCH_SIZE)
+
+            # For graphing
+            stats.episode_rewards[e] += p1_reward
+            stats.episode_lengths[e] = t
+
+            if done:
+                print("Episode:", e,
+                      "P1 total reward:", p1_total_reward,
+                      "P2 total reward:", p2_total_reward,
+                      "Time taken:", t)
+                break
+
+            if e % 10 == 0:
+                agent1.save("spheads-dqn1.h5")
+                agent2.save("spheads-dqn2.h5")
+
+    plot_episode_stats(stats)
+
+# play()
+train()
