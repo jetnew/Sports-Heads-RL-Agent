@@ -10,10 +10,10 @@ Reinforcement learning agent to play Sports Heads.
 
 ## Challenges faced
 ### The Environment
-* The "environment API" needs to be created from scratch because there was no available API for Sports Heads. I used PyAutoGui to control the agents.
+* 15/2/2019: The "environment API" needs to be created from scratch because there was no available API for Sports Heads. I used PyAutoGui to control the agents.
 ### The Score
-* The score can only be interpreted off the screen, so I tried OpenCV, along with PyTesseract to perform OCR to obtain the score off the screen. However, PyTesseract takes ~1 second to detect the score, which is not viable for a game which requires fine movement controls. Template matching works, at about ~0.2 seconds, enabling for finer movements for the agent.
-
+* 16/2/2019: The score can only be interpreted off the screen, so I tried OpenCV, along with PyTesseract to perform OCR to obtain the score off the screen. However, PyTesseract takes ~1 second to detect the score, which is not viable for a game which requires fine movement controls. Template matching works, at about ~0.2 seconds, enabling for finer movements for the agent.
+* 17/2/2019: After 6 hours of training of self-play between 2 agents, both agents seem to learn to stay to the goal in hopes of the other opponent kicking the ball and getting an own-goal. A minimum epsilon of 0 seems to converge the agents to this local minima. I will try a minimum epsilon of 0.2 to allow the agent to explore more.
 
 ## References
 * [Sports Heads](http://hazardousgames123.weebly.com/sports-heads.html)
